@@ -16,6 +16,7 @@ module.exports = {
     "space-before-function-paren": ["error", "never"],
     'quotes': [0, "double"],
     'semi':[0,'never'],
-    'comma-dangle':[0,'never']
+    'comma-dangle':[0,'never'],
+    "indent": ["off", 4]
   }
 }
