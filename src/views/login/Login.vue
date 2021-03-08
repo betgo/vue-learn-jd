@@ -24,43 +24,65 @@
         <span class="item">找回密码</span>
       </div>
     </div>
+    <Toast v-if="show" :message="toastMessage" />
   </div>
-  <Toaster v-if="show" :message="message" />
 </template>
 
 <script>
-import Toaster from "../../components/Toaster.vue";
+import { reactive, toRefs } from "vue";
+import Toast, { useToastEffect } from "../../components/Toast";
 import { post } from "../../utility/request";
+import { useRouter } from "vue-router";
+
+const useLoginEffect = (showToast) => {
+  const router = useRouter();
+  const data = reactive({ username: "", password: "" });
+
+  const handleLogin = async () => {
+    try {
+      const result = await post("/api/user/login", {
+        username: data.username,
+        password: data.password,
+      });
+      if (result?.errno === 0) {
+        localStorage.isLogin = true;
+        router.push("/");
+      } else {
+        showToast("登入失败");
+      }
+    } catch (error) {
+      showToast("请求失败");
+    }
+  };
+  const { username, password } = toRefs(data);
+  return { username, password, handleLogin };
+};
+
+const useRegisterEffect = () => {
+  const router = useRouter();
+  const handleRegister = () => {
+    router.push("/login/register");
+  };
+  return { handleRegister };
+};
 
 export default {
   name: "Login",
-  components: [Toaster],
-  data() {
+  components: { Toast },
+  setup() {
+    const { show, toastMessage, showToast } = useToastEffect();
+    const { username, password, handleLogin } = useLoginEffect(showToast);
+    const { handleRegister } = useRegisterEffect();
+    // const { username, password } = toRefs(data);
     return {
-      username: "",
-      password: "",
-      show: false,
-      message: "",
+      username,
+      password,
+      handleRegister,
+      handleLogin,
+      show,
+      toastMessage,
+      showToast,
     };
-  },
-  methods: {
-    async handleLogin() {
-      try {
-        const result = await post("/api/user/login", {
-          username: this.username,
-          password: this.password,
-        });
-        if (result?.errno === 0) {
-          // localStorage.isLogin = true;
-          // this.$router.push("/");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    handleRegister() {
-      this.$router.push("/login/register");
-    },
   },
 };
 </script>

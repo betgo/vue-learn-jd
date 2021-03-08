@@ -1,72 +1,38 @@
 <template>
   <div class="shops">
     <div class="shops__title">附近店铺</div>
-    <div class="shops__shop">
-      <img
-        src="http://www.dell-lee.com/imgs/vue3/near.png"
-        class="shops__shop__img"
-      />
+    <div class="shops__shop" v-for="item in nearbyList" :key="item._id">
+      <img :src="item.imgUrl" class="shops__shop__img" />
       <div class="shops__shop__desc">
-        <div class="name">沃尔玛</div>
+        <div class="name">{{ item.name }}</div>
         <div class="info">
-          <span class="item">月售1万+</span>
-          <span class="item">起送¥0</span>
-          <span class="item">基础运费¥5</span>
+          <span class="item">月售: {{ item.sales }}</span>
+          <span class="item">起送: {{ item.expressLimit }}</span>
+          <span class="item">基础运费: {{ item.expressPrice }}</span>
         </div>
-        <div class="extra">VIP尊享满89元减4元运费券（每月3张）</div>
-      </div>
-    </div>
-    <div class="shops__shop">
-      <img
-        src="http://www.dell-lee.com/imgs/vue3/near.png"
-        class="shops__shop__img"
-      />
-      <div class="shops__shop__desc">
-        <div class="name">沃尔玛</div>
-        <div class="info">
-          <span class="item">月售1万+</span>
-          <span class="item">起送¥0</span>
-          <span class="item">基础运费¥5</span>
-        </div>
-        <div class="extra">VIP尊享满89元减4元运费券（每月3张）</div>
-      </div>
-    </div>
-    <div class="shops__shop">
-      <img
-        src="http://www.dell-lee.com/imgs/vue3/near.png"
-        class="shops__shop__img"
-      />
-      <div class="shops__shop__desc">
-        <div class="name">沃尔玛</div>
-        <div class="info">
-          <span class="item">月售1万+</span>
-          <span class="item">起送¥0</span>
-          <span class="item">基础运费¥5</span>
-        </div>
-        <div class="extra">VIP尊享满89元减4元运费券（每月3张）</div>
-      </div>
-    </div>
-    <div class="shops__shop">
-      <img
-        src="http://www.dell-lee.com/imgs/vue3/near.png"
-        class="shops__shop__img"
-      />
-      <div class="shops__shop__desc">
-        <div class="name">沃尔玛</div>
-        <div class="info">
-          <span class="item">月售1万+</span>
-          <span class="item">起送¥0</span>
-          <span class="item">基础运费¥5</span>
-        </div>
-        <div class="extra">VIP尊享满89元减4元运费券（每月3张）</div>
+        <div class="extra">{{ item.slogan }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import { get } from "../../utility/request";
 export default {
   name: "Nearby",
+
+  setup() {
+    const nearbyList = ref([]);
+    const getNearbyList = async () => {
+      const result = await get("/api/shop/hot-list");
+      if (result?.errno === 0 && result?.data?.length) {
+        nearbyList.value = result.data;
+      }
+    };
+    getNearbyList();
+    return { nearbyList };
+  },
 };
 </script>
 
