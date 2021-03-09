@@ -1,25 +1,22 @@
 <template>
   <div class="shops">
     <div class="shops__title">附近店铺</div>
-    <div class="shops__shop" v-for="item in nearbyList" :key="item._id">
-      <img :src="item.imgUrl" class="shops__shop__img" />
-      <div class="shops__shop__desc">
-        <div class="name">{{ item.name }}</div>
-        <div class="info">
-          <span class="item">月售: {{ item.sales }}</span>
-          <span class="item">起送: {{ item.expressLimit }}</span>
-          <span class="item">基础运费: {{ item.expressPrice }}</span>
-        </div>
-        <div class="extra">{{ item.slogan }}</div>
-      </div>
-    </div>
+    <router-link
+      :to="`/shop/${item._id}`"
+      v-for="item in nearbyList"
+      :key="item._id"
+    >
+      <shop-info :item="item" />
+    </router-link>
   </div>
 </template>
 
 <script>
 import { ref } from "vue";
 import { get } from "../../utility/request";
+import ShopInfo from "../../components/ShopInfo.vue";
 export default {
+  components: { ShopInfo },
   name: "Nearby",
 
   setup() {
@@ -48,36 +45,8 @@ export default {
     color: #333333;
     font-weight: normal;
   }
-  &__shop {
-    display: flex;
-    padding: 0.12rem 0;
-    &__img {
-      width: 0.56rem;
-      height: 0.56rem;
-      margin-right: 0.16rem;
-    }
-    &__desc {
-      flex: 1;
-      padding-bottom: 0.12rem;
-      border-bottom: 1px solid $content-bgColor;
-      .name {
-        font-size: 0.16rem;
-        color: $content-fontcolor;
-      }
-      .info {
-        margin: 0.08rem 0;
-        .item {
-          margin-right: 0.16rem;
-          line-height: 0.18rem;
-          font-size: 0.13rem;
-        }
-      }
-      .extra {
-        color: $titleExtra-fontcolor;
-        line-height: 0.18rem;
-        font-size: 0.13rem;
-      }
-    }
-  }
+}
+a{
+    text-decoration: none;
 }
 </style>
