@@ -27,9 +27,18 @@
           </p>
         </div>
         <div class="product__number">
-          <span class="product__number__minus iconfont">&#xe691;</span>
-          8
-          <span class="product__number__plus iconfont">&#xe668;</span>
+          <span
+            class="product__number__minus iconfont"
+            v-show="getProductCartCount(shopId, item._id) > 0"
+            @click="changeCartItem(shopId, item._id, item, -1)"
+            >&#xe691;</span
+          >
+          {{ getProductCartCount(shopId, item._id) }}
+          <span
+            class="product__number__plus iconfont"
+            @click="changeCartItem(shopId, item._id, item, 1)"
+            >&#xe668;</span
+          >
         </div>
       </div>
     </div>
@@ -39,6 +48,7 @@
 <script>
 import { useRoute } from "vue-router";
 import { reactive, ref, toRefs, watchEffect } from "vue";
+import { useStore } from "vuex";
 import { get } from "../../utility/request";
 
 const categories = [
@@ -73,14 +83,23 @@ const useCurrentListEffect = (currentTab, shopId) => {
   return { list };
 };
 // 购物车
-// const useCartEffect = () => {
-//   const product = reactive({
-//     carts: [],
-//   });
-//   const changeCartItem = (shopId, productId, item, num, shopName) => {
-//     product.carts.map
-//   };
-// };
+const useCartEffect = () => {
+  const store = useStore();
+
+  const cartList = store.state.cartList;
+  const getProductCartCount = (shopId, productId) => {
+    return cartList?.[shopId]?.productList?.[productId]?.count || 0;
+  };
+  const changeCartItem = (shopId, productId, item, num) => {
+    store.commit("changeCartItemInfo", {
+      shopId,
+      productId,
+      productInfo: item,
+      num,
+    });
+  };
+  return { cartList, changeCartItem, getProductCartCount };
+};
 export default {
   name: "Content",
 
@@ -89,12 +108,16 @@ export default {
     const shopId = route.params.id;
     const { currentTab, switchTab } = useTabEffect();
     const { list } = useCurrentListEffect(currentTab, shopId);
-
+    const { cartList, changeCartItem, getProductCartCount } = useCartEffect();
     return {
       categories,
       list,
       currentTab,
       switchTab,
+      changeCartItem,
+      cartList,
+      shopId,
+      getProductCartCount,
     };
   },
 };
@@ -176,6 +199,7 @@ export default {
       position: absolute;
       right: 0;
       bottom: 0.12rem;
+      font-size: 0.16rem;
       line-height: 0.18rem;
       &__minus {
         position: relative;
@@ -191,5 +215,8 @@ export default {
       }
     }
   }
+}
+.iconfont {
+  font-size: 0.2rem;
 }
 </style>

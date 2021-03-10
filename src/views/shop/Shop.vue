@@ -7,10 +7,10 @@
         <input class="search__text" placeholder="请输入商品名称" />
       </div>
     </div>
-    <shop-info :item="item" />
-  </div>
+    <ShopInfo :item="item" :hideBorder="true" v-show="item.imgUrl" />
   <Content />
   <Cart />
+  </div>
 </template>
 
 <script>
@@ -49,11 +49,11 @@ export default {
 <style lang="scss" scoped>
 @import "../../style/viriables.scss";
 .wrapper {
-  padding: 0.16rem 0.18rem 0 0.18rem;
+  padding: 0 0.18rem 0 0.18rem;
   .search-container {
     display: flex;
     line-height: 0.32rem;
-
+  margin: .14rem 0 .04rem 0;
     .back {
       width: 0.3rem;
       font-size: 0.24rem;
@@ -63,7 +63,6 @@ export default {
   .search {
     flex: 1;
     display: flex;
-    margin-bottom: 0.12rem;
     background: $search-color;
     border-radius: 0.16rem;
     color: $search-fontcolor;
